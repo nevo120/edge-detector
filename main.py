@@ -1,3 +1,7 @@
+from sobel_edge import sobel_edge
+from gradient_edge import gradient_edge
+from simple_edge import simple_edge
+
 image = [
 [10,10,10,200,200],
 [10,10,10,200,200],
@@ -32,3 +36,7 @@ for row_index in range(len(image)-1):
 
 for row in edges:
     print(row)               
+
+
+result = simple_edge("unknown.ico")
+result.show()

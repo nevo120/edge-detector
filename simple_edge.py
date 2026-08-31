@@ -1,13 +1,12 @@
-import math
 from PIL import Image, ImageFilter
 
-#basic gradient edge detection function
-def gradient_edge(image_path, threshold=5, blur_radius=1.5):
+#simple edge detection function
+def simple_edge(image_path, threshold=3, blur_radius=1.5):
 
     #load image and convert to grayscale
     img = Image.open(image_path).convert("L")
 
-    #reduce noise before edge detection
+    #reduce noise
     gray = img.filter(ImageFilter.GaussianBlur(radius=blur_radius))
 
     width, height = gray.size
@@ -15,7 +14,7 @@ def gradient_edge(image_path, threshold=5, blur_radius=1.5):
     #create black output image
     edge_image = Image.new("L", (width, height), 0)
 
-    #calculate gradient for each pixel
+    #check horizontal and vertical pixel differences
     for y in range(height - 1):
         for x in range(width - 1):
 
@@ -23,15 +22,11 @@ def gradient_edge(image_path, threshold=5, blur_radius=1.5):
             pixel_right = gray.getpixel((x + 1, y))
             pixel_down = gray.getpixel((x, y + 1))
 
-            #horizontal and vertical change
-            gx = pixel_right - pixel
-            gy = pixel_down - pixel
+            difference_hor = abs(pixel_right - pixel)
+            difference_ver = abs(pixel_down - pixel)
 
-            #combine both directions
-            gradient = math.sqrt(gx**2 + gy**2)
-
-            #keep only significant edges
-            if gradient > threshold:
+            #mark significant changes as edges
+            if difference_hor > threshold or difference_ver > threshold:
                 edge_image.putpixel((x, y), 255)
 
     return edge_image
